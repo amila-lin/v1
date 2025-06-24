@@ -11,24 +11,29 @@
   </script>
 </head>
 <body class="bg-gray-50 text-gray-800 transition-colors duration-300 dark:bg-gray-900 dark:text-white">
-  <div id="app" class="max-w-3xl mx-auto mt-5 p-6 text-center">
+  <div id="app" class="max-w-3xl mx-auto mt-5 p-4 sm:p-6 text-center">
     <h1 class="text-3xl font-bold mb-6">國小數學運算練習系統</h1>
 
-    <div class="space-y-4">
-      <div class="flex justify-between items-center mb-4">
-        <button @click="toggleDarkMode" class="px-4 py-2 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+    <div class="space-y-6">
+      <!-- 按鈕區塊：暗黑與列印 -->
+      <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2">
+        <button @click="toggleDarkMode"
+                class="w-full sm:w-auto px-4 py-2 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">
           <span v-if="darkMode">🌞 切換光照模式</span>
           <span v-else>🌙 切換深色模式</span>
         </button>
-        <button v-if="started && !submitted" @click="printQuestions" class="px-4 py-2 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+        <button v-if="started && !submitted" @click="printQuestions"
+                class="w-full sm:w-auto px-4 py-2 border rounded hover:bg-gray-100 dark:hover:bg-gray-700">
           🖨️ 列印題目
         </button>
       </div>
 
-      <div v-if="!started" class="space-y-4 text-left">
+      <!-- 選項設定區 -->
+      <div v-if="!started" class="space-y-6 text-left">
         <div>
-          <label class="mb-1 font-semibold">選擇練習項目：</label>
-          <select v-model="operation" class="w-4/5 border p-2 rounded dark:bg-gray-800 dark:border-gray-600">
+          <label class="block font-semibold mb-1">選擇練習項目：</label>
+          <select v-model="operation"
+                  class="w-full border p-2 rounded dark:bg-gray-800 dark:border-gray-600">
             <option value="+">加法</option>
             <option value="-">減法</option>
             <option value="*">乘法</option>
@@ -36,9 +41,10 @@
           </select>
         </div>
 
-        <div class="flex items-center space-x-4 mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
           <div class="font-semibold min-w-[100px]">難度等級：</div>
-          <select v-model.number="digitLevel" class="border p-2 rounded dark:bg-gray-800 dark:border-gray-600">
+          <select v-model.number="digitLevel"
+                  class="w-full sm:w-auto border p-2 rounded dark:bg-gray-800 dark:border-gray-600">
             <option :value="1">🐣 1位數</option>
             <option :value="2">🐥 1~2位數</option>
             <option :value="3">✨ 2~3位數</option>
@@ -51,39 +57,44 @@
           </p>
         </div>
 
-        <div class="flex space-x-2 items-center">
-          <div class="w-[200px] mb-1 font-semibold">題目數量（3～50）：</div>
-          <div class="w-full">
-            <input type="number" v-model.number="questionCount" min="3" max="50"
-            class="w-full border p-2 rounded dark:bg-gray-800 dark:border-gray-600" />
-          </div>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+          <label class="font-semibold sm:flex-shrink-0">題目數量（3～50）：</label>
+          <input type="number" v-model.number="questionCount" min="3" max="50"
+                 class="flex-1 border p-2 rounded dark:bg-gray-800 dark:border-gray-600" />
         </div>
 
-        <button @click="startQuiz" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+        <button @click="startQuiz"
+                class="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 text-lg">
           開始練習
         </button>
       </div>
 
+      <!-- 題目區 -->
       <div v-else class="space-y-4 text-left">
-        <div v-for="(q, index) in questions" :key="index" class="flex items-center space-x-2">
+        <div v-for="(q, index) in questions" :key="index"
+             class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
           <span>{{ index + 1 }}.</span>
           <span>{{ q.a }} {{ q.op }} {{ q.b }} =</span>
           <input type="number" v-model="q.userAnswer" :disabled="submitted"
-            class="border rounded p-1 w-24 dark:bg-gray-800 dark:border-gray-600" />
+                 class="w-full sm:w-24 p-2 text-base border rounded dark:bg-gray-800 dark:border-gray-600" />
           <span v-if="submitted" :class="q.correct ? 'text-green-500' : 'text-red-500'">
             （{{ q.correct ? '正確' : '錯誤' }}，答案：{{ q.answer }}）
           </span>
         </div>
 
-        <div class="flex justify-end mt-4">
-          <button v-if="!submitted" @click="endQuiz" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        <!-- 作答控制按鈕 -->
+        <div class="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+          <button v-if="!submitted" @click="endQuiz"
+                  class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             結束練習
           </button>
-          <button v-else @click="restart" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+          <button v-else @click="restart"
+                  class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
             重新開始
           </button>
         </div>
 
+        <!-- 結果 -->
         <div v-if="submitted" class="mt-4">
           <h3 class="text-xl font-bold">批改結果：</h3>
           <p>正確 {{ correctCount }} / {{ questions.length }} 題</p>
@@ -91,15 +102,16 @@
         </div>
       </div>
 
-      <!-- 顯示歷史紀錄 -->
+      <!-- 歷史紀錄 -->
       <div class="mt-6">
         <h2 class="text-2xl font-bold mb-4">最近 10 筆紀錄</h2>
-        <ul class="list-none text-left">
-          <li v-for="(record, index) in history" :key="index" class="mb-2 p-4 border rounded dark:bg-gray-800">
+        <ul class="space-y-2 text-left">
+          <li v-for="(record, index) in history" :key="index"
+              class="p-4 border rounded dark:bg-gray-800">
             <p><strong>日期：</strong>{{ record.date }}</p>
             <p><strong>運算方式：</strong>{{ record.operation }}</p>
             <p>
-              <strong>正確數量：</strong>{{ record.correct }} / {{ record.total }} 
+              <strong>正確數量：</strong>{{ record.correct }} / {{ record.total }}
               <strong v-if="record.correct === record.total" class="text-yellow-500">🏅 100 分！</strong>
             </p>
             <p><strong>時間：</strong>{{ formatTime(record.time) }}</p>
@@ -109,6 +121,7 @@
     </div>
   </div>
 
+  <!-- Vue + Script -->
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2.33/dist/vue.global.prod.js"></script>
   <script>
     const { createApp } = Vue;
@@ -117,7 +130,7 @@
       data() {
         return {
           operation: '+',
-          digitLevel: 2,  // 難度預設值
+          digitLevel: 2,
           questionCount: 5,
           questions: [],
           started: false,
@@ -131,26 +144,10 @@
       },
       computed: {
         digitMin() {
-          switch(this.digitLevel) {
-            case 1: return 1;
-            case 2: return 1;
-            case 3: return 2;
-            case 4: return 3;
-            case 5: return 4;
-            case 6: return 2;  // 2~7位數 最小
-            default: return 1;
-          }
+          return [1, 1, 2, 3, 4, 2][this.digitLevel - 1] || 1;
         },
         digitMax() {
-          switch(this.digitLevel) {
-            case 1: return 1;
-            case 2: return 2;
-            case 3: return 3;
-            case 4: return 4;
-            case 5: return 5;
-            case 6: return 7;  // 2~7位數 最大
-            default: return 2;
-          }
+          return [1, 2, 3, 4, 5, 7][this.digitLevel - 1] || 2;
         },
         correctCount() {
           return this.questions.filter(q => q.correct).length;
@@ -174,19 +171,15 @@
             a = b * this.generateNumber(this.digitMin);
           }
 
-          if (op === '-' && a < b) {
-            [a, b] = [b, a];
-          }
+          if (op === '-' && a < b) [a, b] = [b, a];
 
-          let answer;
-          switch (op) {
-            case '+': answer = a + b; break;
-            case '-': answer = a - b; break;
-            case '*': answer = a * b; break;
-            case '/': answer = a / b; break;
-          }
+          const answer = {
+            '+': a + b,
+            '-': a - b,
+            '*': a * b,
+            '/': a / b
+          }[op];
 
-          // 過濾答案為 0 或 1
           if (answer === 0 || answer === 1) return this.createQuestion();
 
           return { a, b, op, answer, userAnswer: null, correct: false };
@@ -208,16 +201,14 @@
           });
           this.submitted = true;
           this.stopTimer();
-
-          const record = {
+          this.history.unshift({
             date: new Date().toLocaleString(),
             operation: this.getOperationName(this.operation),
             correct: this.correctCount,
             total: this.questions.length,
             time: this.elapsedTime
-          };
-          this.history.unshift(record);
-          this.history = this.history.slice(0, 10); // 保留最近 10 筆紀錄
+          });
+          this.history = this.history.slice(0, 10);
           localStorage.setItem('math_quiz_history', JSON.stringify(this.history));
         },
         restart() {
@@ -259,7 +250,6 @@
         const dark = localStorage.getItem('math_quiz_dark_mode') === '1';
         this.darkMode = dark;
         document.documentElement.classList.toggle('dark', dark);
-
         const savedHistory = localStorage.getItem('math_quiz_history');
         if (savedHistory) {
           this.history = JSON.parse(savedHistory);
