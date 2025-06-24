@@ -88,9 +88,9 @@
                   class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             結束練習
           </button>
-          <button v-else @click="restart"
+          <button @click="restart"
                   class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
-            重新開始
+             {{ !submitted? '重新選擇練習項目' : '重新開始'}}
           </button>
         </div>
 
