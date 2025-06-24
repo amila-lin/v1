@@ -74,7 +74,7 @@
         <div v-for="(q, index) in questions" :key="index"
              class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
           <span>{{ index + 1 }}.</span>
-          <span>{{ q.a }} {{ q.op }} {{ q.b }} =</span>
+          <span>{{ q.a }} {{ formatOperator(q.op) }} {{ q.b }} =</span>
           <input type="number" v-model="q.userAnswer" :disabled="submitted"
                  class="w-full sm:w-24 p-2 text-base border rounded dark:bg-gray-800 dark:border-gray-600" />
           <span v-if="submitted" :class="q.correct ? 'text-green-500' : 'text-red-500'">
@@ -154,6 +154,13 @@
         }
       },
       methods: {
+        formatOperator(op) {
+          switch (op) {
+            case '*': return 'x';
+            case '/': return '÷';
+            default: return op;
+          }
+        },
         generateNumber(digits) {
           const min = Math.pow(10, digits - 1);
           const max = Math.pow(10, digits) - 1;
